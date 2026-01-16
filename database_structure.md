@@ -3,7 +3,7 @@
 
 The database schema will be designed to reflect the hierarchical and relational nature of the XML schemas. Each major complex type will likely correspond to a table, and nested complex types or elements with `maxOccurs="unbounded"` will either become separate tables linked by foreign keys or be denormalized into the parent table if appropriate (e.g., simple lists of values).
 
-Here's a breakdown by schema, focusing on the main entities:
+Main entities:
 
 ---
 
@@ -20,12 +20,12 @@ This schema defines `Personnel` which contains `ErpPersonnel`. `ErpPersonnel` ex
 *   `ADMINISTRATION_INDICATOR` (BOOLEAN)
 *   `DEEMED_START_DATE_TIME` (DATETIME)
 *   `FINISH_DATE` (DATE)
-*   `JOB_CODE` (VARCHAR) - *Note: Schema indicates this is obsoleted, but included for completeness if older data exists.*
-*   `JOB_RESTRICTION_CODES` (VARCHAR) - *Note: Schema indicates this is obsoleted.*
-*   `JOB_TITLE` (VARCHAR) - *Note: Schema indicates this is obsoleted.*
+*   `JOB_CODE` (VARCHAR)
+*   `JOB_RESTRICTION_CODES` (VARCHAR)
+*   `JOB_TITLE` (VARCHAR)
 *   `KEY_PERSON_INDICATOR` (BOOLEAN)
 *   `OVERTIME_ELIGIBLE_INDICATOR` (BOOLEAN)
-*   `PAYMENT_METHOD` (VARCHAR) - *Note: Schema indicates this is obsoleted.*
+*   `PAYMENT_METHOD` (VARCHAR)
 *   `RESPONSIBILITY` (VARCHAR)
 *   `START_DATE` (DATE)
 *   `TRANSFER_BENEFITS_PAYABLE_INDICATOR` (BOOLEAN)
@@ -663,15 +663,3 @@ This schema defines generic message structures, which are more about the communi
 *   `REPLY_CODE` (VARCHAR)
 *   `REPLY_DETAILS` (VARCHAR)
 *   `ID` (VARCHAR)
-
----
-
-### General Considerations:
-
-*   **Primary Keys:** I've suggested `UUID` or auto-incrementing integers for primary keys. The choice depends on the specific database system and performance requirements.
-*   **Foreign Keys:** Relationships are established using foreign keys.
-*   **Data Types:** I've used generic SQL data types (VARCHAR, DATETIME, BOOLEAN, DECIMAL, FLOAT, INTEGER). These would need to be mapped to specific types for your chosen database (e.g., `NVARCHAR(255)`, `DATE`, `NUMBER(10,2)`).
-*   **`IdentifiedObject` Inheritance:** Many complex types extend `IdentifiedObject`. I've denormalized these common attributes (`mRID`, `aliasName`, `description`, `localName`, `name`, `pathName`) into each table for simplicity, but they could also be in a separate `IDENTIFIED_OBJECT` table with a one-to-one relationship if strict normalization is preferred.
-*   **`Document` Inheritance:** Similarly, attributes from `Document` are denormalized.
-*   **`Status` Table:** The `Status` complex type appears frequently. It could be a separate table with a generic foreign key mechanism (e.g., `STATUS_FOR_TABLE`, `STATUS_FOR_ID`) or denormalized into each table that uses it. For simplicity, I've denormalized it into the tables where it's directly referenced.
-*   **`Name` Table:** The `Names` element in `IdentifiedObject` is `maxOccurs="unbounded"`, suggesting a separate table for names associated with an `IdentifiedObject`.
