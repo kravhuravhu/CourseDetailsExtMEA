@@ -95,9 +95,9 @@ app/
 ## 🔧 Development Setup
 
 ### Environment Configuration
-```bash
-📡 API Endpoints (Planned)
+##### 📡 API Endpoints
 Integration Endpoints
+```bash
 POST /api/integration/course-details - Receive course details from integration
 
 POST /api/integration/personnel-details - Receive personnel details
@@ -114,46 +114,33 @@ GET /personnel/{id} - Personnel details
 GET /courses - Course listing
 
 GET /reports - Reporting interface
+```
 
-🛡️ Security Considerations
-API authentication for integration endpoints
+##### 🛡️ Security Considerations
+- API authentication for integration endpoints
 
-CSRF protection for web forms
+- CSRF protection for web forms
 
-Input validation and sanitization
+- Input validation and sanitization
 
-SQL injection prevention
+- SQL injection prevention
 
-XSS protection
+- XSS protection
 
-Secure session management
+- Secure session management
 
-🧪 Testing Strategy
-Test Types
-Unit Tests - Individual components and services
-
-Integration Tests - API endpoints and database interactions
-
-Feature Tests - User interface and workflows
-
-Integration Flow Tests - End-to-end data flow testing
-
-Test Data
-Sample XML messages from SAP LSO
-
-Mock JMS messages
-
-Test database with sample records
-
-📈 Future Enhancements
-Phase 1 (MVP)
+##### 📈 Future Enhancements
+1. Phase 1 (MVP)
+```bash
 Basic data reception and storage
 
 Simple web interface for data viewing
 
 Basic reporting
+```
 
-Phase 2
+2. Phase 2
+```bash
 Advanced search and filtering
 
 Export functionality
@@ -161,8 +148,10 @@ Export functionality
 Email notifications
 
 Dashboard analytics
+```
 
-Phase 3
+3. Phase 3
+```bash
 Advanced reporting and analytics
 
 Integration with other systems
@@ -170,14 +159,11 @@ Integration with other systems
 Mobile responsive design
 
 Advanced security features
+```
 
-🤝 Contributing
-Fork the repository
-
-Create a feature branch
-
-Make your changes
-
-Write or update tests
-
-Submit a pull request
+##### 🤝 Contributing
+- Fork the repository
+- Create a feature branch
+- Make your changes
+- Write or update tests
+- Submit a pull request
