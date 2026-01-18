@@ -11,7 +11,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register Integration Service
+        $this->app->singleton(\App\Services\Integration\CourseDetailsProcessor::class, function ($app) {
+            return new \App\Services\Integration\CourseDetailsProcessor();
+        });
     }
 
     /**
@@ -19,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Set default string length for migrations
+        \Illuminate\Support\Facades\Schema::defaultStringLength(191);
     }
 }
