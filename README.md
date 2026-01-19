@@ -1,59 +1,137 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CourseDetailsExtMEA - MEA Engineering Accountability System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 📋 Project Overview
 
-## About Laravel
+**CourseDetailsExtMEA** is a Laravel-based web application that serves as the target system for the MEA (Management of Engineering Accountability) solution. This system receives course details and personnel information from SAP LSO (via integration middleware) and manages engineering accountability and technical governance competency requirements for Generation Engineering within the MEA tool library.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 🎯 Key Objectives
+- Receive and process course details from SAP LSO through JMS topics
+- Maintain engineering accountability records
+- Manage technical governance competency requirements
+- Provide a web interface for viewing and managing competency data
+- Serve as a mock MEA system for integration testing
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🔗 Integration Flow
+SAP LSO → SAP PO → Integration (OSB) → JMS Topics → CourseDetailsMEAProvABCSREST → CourseDetailsExtMEA (this system)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🏗️ System Architecture
 
-## Learning Laravel
+### Components
+1. **Laravel Web Application** - Main MEA system interface
+2. **REST API Endpoints** - For receiving data from integration layer
+3. **MySQL Database** - Stores personnel, course, and competency data
+4. **Web Interface** - For administrators to view and manage data
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Data Flow
+1. SAP LSO sends course details to SAP PO
+2. SAP PO transforms and sends to Oracle Service Bus (OSB)
+3. OSB publishes to JMS topics (`topicCourseDetailsAdHoc` or `topicCourseDetailsTakeOn`)
+4. `CourseDetailsMEAProvABCSREST` consumes from JMS and transforms to ABM
+5. This system receives the ABM data via REST API
+6. Data is stored in the MySQL database
+7. Administrators can view and manage data through web interface
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📊 Database Schema
 
-## Laravel Sponsors
+The system uses a comprehensive database structure based on XML schemas from the integration:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Main Entities
+- **Personnel** - Employee information and details
+- **Organisations** - Company and organizational data
+- **Locations** - Geographic and address information
+- **VehicleAssetInformation** - Asset and vehicle data
+- **Message Structures** - Integration message metadata
 
-### Premium Partners
+### Key Features
+- Hierarchical data structure reflecting XML schema relationships
+- Foreign key relationships for data integrity
+- Audit trails for data changes
+- Support for multiple message types (AdHoc and TakeOn)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🚀 Getting Started
 
-## Contributing
+### Prerequisites
+- PHP 8.0 or higher
+- Composer
+- MySQL 5.7 or higher
+- Laravel 9.x or 10.x
+- Web server (Apache/Nginx)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Installation Steps
+1. Clone the repository
+2. Configure database connection
+3. Run database migrations (when available)
+4. Install dependencies with Composer
+5. Configure environment variables
+6. Start the application
 
-## Code of Conduct
+## 📁 Project Structure (Planned)
+app/
+├── Console/
+├── Exceptions/
+├── Http/
+│ ├── Controllers/
+│ │ ├── Api/
+│ │ │ ├── CourseController.php
+│ │ │ ├── PersonnelController.php
+│ │ │ └── IntegrationController.php
+│ │ └── Web/
+│ │ ├── DashboardController.php
+│ │ ├── PersonnelController.php
+│ │ └── ReportsController.php
+│ ├── Middleware/
+│ └── Requests/
+├── Models/
+│ ├── Personnel/
+│ ├── Organisations/
+│ ├── Locations/
+│ └── Integration/
+├── Services/
+│ ├── Integration/
+│ ├── Validation/
+│ └── Transformation/
+└── Listeners/
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🔧 Development Setup
 
-## Security Vulnerabilities
+### Environment Configuration
+##### 📡 API Endpoints
+Integration Endpoints
+```bash
+POST /api/integration/course-details - Receive course details from integration
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+POST /api/integration/personnel-details - Receive personnel details
 
-## License
+GET /api/integration/status - Check integration status
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Web Application Endpoints
+GET / - Dashboard
+
+GET /personnel - Personnel listing
+
+GET /personnel/{id} - Personnel details
+
+GET /courses - Course listing
+
+GET /reports - Reporting interface
+```
+
+##### 🛡️ Security Considerations (future)
+- API authentication for integration endpoints
+
+- CSRF protection for web forms
+
+- Input validation and sanitization
+
+- SQL injection prevention
+
+- XSS protection
+
+- Secure session management
+
+##### 🤝 Contributing
+- Fork the repository
+- Create a feature branch
+- Make your changes
+- Write or update tests
+- Submit a pull request
