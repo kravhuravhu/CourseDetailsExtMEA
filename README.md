@@ -65,33 +65,6 @@ The system uses a comprehensive database structure based on XML schemas from the
 5. Configure environment variables
 6. Start the application
 
-## 📁 Project Structure (Planned)
-app/
-├── Console/
-├── Exceptions/
-├── Http/
-│ ├── Controllers/
-│ │ ├── Api/
-│ │ │ ├── CourseController.php
-│ │ │ ├── PersonnelController.php
-│ │ │ └── IntegrationController.php
-│ │ └── Web/
-│ │ ├── DashboardController.php
-│ │ ├── PersonnelController.php
-│ │ └── ReportsController.php
-│ ├── Middleware/
-│ └── Requests/
-├── Models/
-│ ├── Personnel/
-│ ├── Organisations/
-│ ├── Locations/
-│ └── Integration/
-├── Services/
-│ ├── Integration/
-│ ├── Validation/
-│ └── Transformation/
-└── Listeners/
-
 ## 🔧 Development Setup
 
 ### Environment Configuration
