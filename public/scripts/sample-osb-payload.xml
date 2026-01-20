@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PersonnelDetailsRequest xmlns="http://cim.example.com/svn/messages/envelopes/PersonnelDetails/PersonnelDetails_V6">
+    <Header>
+        <Noun>PersonnelDetails</Noun>
+        <MessageID>MSG_123456789</MessageID>
+        <OriginalEventDateTime>2024-01-20T10:30:00Z</OriginalEventDateTime>
+        <Source>SAP_LSO</Source>
+        <Destination>CourseDetailsExtMEA</Destination>
+    </Header>
+    <Payload>
+        <Personnel>
+            <ErpPersonnel>
+                <mRID>EMP_OSB_TEST_001</mRID>
+                <name>John OSB Integration</name>
+                <firstName>John</firstName>
+                <lastName>OSB Integration</lastName>
+                <gender>Male</gender>
+                <birthDateTime>1980-05-15T00:00:00Z</birthDateTime>
+                <nationality>South African</nationality>
+                <category>Employee</category>
+                <Skill>
+                    <ToDocumentRoles>
+                        <mRID>SKILL_001</mRID>
+                        <name>Java Development</name>
+                        <category>Technical</category>
+                    </ToDocumentRoles>
+                </Skill>
+                <startDate>2020-01-01</startDate>
+                <jobTitle>Senior Integration Engineer</jobTitle>
+                <keyPersonIndicator>true</keyPersonIndicator>
+                <responsibility>OSB Integration Development</responsibility>
+            </ErpPersonnel>
+        </Personnel>
+        <Organisations>
+            <ErpOrganisation>
+                <mRID>ORG_OSB_001</mRID>
+                <name>Integration Department</name>
+                <category>Internal</category>
+                <code>INT001</code>
+                <companyRegistrationNo>2020/123456/07</companyRegistrationNo>
+            </ErpOrganisation>
+        </Organisations>
+    </Payload>
+</PersonnelDetailsRequest>

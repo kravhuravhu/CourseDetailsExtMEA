@@ -33,6 +33,7 @@ foreach ($tests as $test) {
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
+                 'X-API-Key'     => 'test-api-key-123', 
             ],
             'http_errors' => false,
         ]);

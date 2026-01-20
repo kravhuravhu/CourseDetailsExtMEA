@@ -8,28 +8,38 @@ use App\Http\Controllers\Api\Location\LocationController;
 use App\Http\Controllers\Api\Vehicle\VehicleController;
 use App\Http\Controllers\Api\Audit\AuditLogController;
 use App\Http\Controllers\Api\SimpleApiKeyController;
+use App\Http\Controllers\Api\Integration\IntegrationController;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware(['web'])->group(function () {
+    Route::get('/', function () {
+        return view('welcome');
+    });
+
+    Route::get('/api-auth-test', function () {
+        return view('simple-auth');
+    });
+
+    Route::get('/integration-guide', function () {
+        return view('integration-api-guide');
+    });
+
+    Route::get('/health', function () {
+        return response()->json([
+            'status' => 'healthy',
+            'timestamp' => now()->toISOString(),
+            'service' => 'CourseDetailsExtMEA API',
+            'version' => '1.0.0',
+            'note' => 'For API access, use /api/* endpoints with X-API-Key header',
+            'default_test_key' => 'test-api-key-123',
+        ]);
+    });
 });
 
-Route::get('/api-auth-test', function () {
-    return view('simple-auth');
-});
-
-Route::get('/health', function () {
-    return response()->json([
-        'status' => 'healthy',
-        'timestamp' => now()->toISOString(),
-        'service' => 'CourseDetailsExtMEA API',
-        'version' => '1.0.0',
-        'note' => 'For API access, use /api/* endpoints with X-API-Key header',
-        'default_test_key' => 'test-api-key-123',
-    ]);
-});
-
-// PUBLIC API ROUTES (No auth)
+// API Routes
 Route::prefix('api')->group(function () {
+    /**
+     * PUBLIC API ROUTES (No auth)
+    */
     // API Documentation
     Route::get('/docs', function () {
         return response()->json([
@@ -62,6 +72,26 @@ Route::prefix('api')->group(function () {
     Route::post('/generate-key', [SimpleApiKeyController::class, 'generateKey'])->withoutMiddleware(['web']);
     Route::get('/validate-key', [SimpleApiKeyController::class, 'validateKey']);
     Route::get('/list-keys', [SimpleApiKeyController::class, 'listKeys']);
+
+    /**
+     * INTEGRATION ROUTES
+     * for CourseDetailsMEAProvABCSREST
+    */
+    Route::prefix('integration')->group(function () {
+        Route::get('/health', [IntegrationController::class, 'integrationHealth']);
+        
+        // endpoint for connectivity verification
+        Route::get('/test', [IntegrationController::class, 'integrationTest']);
+        
+        // Statistics endpoint
+        Route::get('/stats', [IntegrationController::class, 'integrationStats']);
+        
+        // Main integration endpoint - receives data from OSB
+        Route::post('/personnel', [IntegrationController::class, 'receivePersonnelData']);
+        
+        // Batch processing endpoint
+        Route::post('/personnel/batch', [IntegrationController::class, 'receivePersonnelData']);
+    });
 });
 
 // PROTECTED API ROUTES (Auth)
