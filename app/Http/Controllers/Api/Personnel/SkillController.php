@@ -3,13 +3,59 @@
 namespace App\Http\Controllers\Api\Personnel;
 
 use App\Http\Controllers\Api\BaseController;
-use App\Models\Personnel\Skill;
+use App\Http\Requests\Api\Personnel\CreateErpPersonRequest;
+use App\Http\Requests\Api\Personnel\UpdateErpPersonRequest;
+use App\Models\Personnel\Personnel;
+use App\Models\Personnel\ErpPersonnel;
+use App\Models\Personnel\ErpPerson;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Models\ApiKey;
 
-class SkillController extends BaseController
+class ErpPersonController extends BaseController
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->checkApiKey();
+    }
+    
+    /**
+     * Check API key authentication.
+     */
+    private function checkApiKey(): void
+    {
+        $apiKey = request()->header('X-API-Key') ?: request()->query('api_key');
+        
+        if (!$apiKey) {
+            abort(401, 'API key is required. Please provide X-API-Key header or api_key query parameter.');
+        }
+        
+        $keyRecord = ApiKey::findByKey($apiKey);
+        
+        if (!$keyRecord) {
+            abort(401, 'Invalid API key.');
+        }
+        
+        if (!$keyRecord->isValid()) {
+            abort(401, 'API key is not active or has expired.');
+        }
+        
+        // Mark as used
+        $keyRecord->markAsUsed();
+        
+        // Store in request for logging
+        request()->merge([
+            'api_key_id' => $keyRecord->id,
+            'api_key_name' => $keyRecord->name,
+        ]);
+        
+        $this->apiKeyId = $keyRecord->id;
+        $this->apiKeyName = $keyRecord->name;
+    }
+    
     /**
      * Get skills for a personnel.
      */

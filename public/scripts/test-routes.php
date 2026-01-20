@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 echo "=== Checking Route Configuration ===\n\n";
 
-// Check which routes are registered
+// routes are registered
 $routes = Route::getRoutes();
 
 echo "Total routes registered: " . count($routes) . "\n\n";
@@ -19,17 +19,16 @@ foreach ($routes as $route) {
     echo "    -> " . ($route->getActionName() ?? 'Closure') . "\n";
 }
 
-// Test if we can access the API
 echo "\n=== Testing Direct Access ===\n";
 
-// Create a simple request to test
+// simple request to test
 $request = Illuminate\Http\Request::create('/api/health', 'GET');
 $response = $app->handle($request);
 
 echo "API Health Check Status: " . $response->getStatusCode() . "\n";
 echo "Response: " . $response->getContent() . "\n";
 
-// Test database connection
+// database connection
 echo "\n=== Testing Database ===\n";
 try {
     DB::connection()->getPdo();

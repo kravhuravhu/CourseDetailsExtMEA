@@ -7,29 +7,36 @@ use App\Http\Controllers\Api\Organisation\ErpOrganisationController;
 use App\Http\Controllers\Api\Location\LocationController;
 use App\Http\Controllers\Api\Vehicle\VehicleController;
 use App\Http\Controllers\Api\Audit\AuditLogController;
+use App\Http\Controllers\Api\SimpleApiKeyController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::prefix('api')->group(function () {
-    
-    // Health check endpoint
-    Route::get('/health', function () {
-        return response()->json([
-            'status' => 'healthy',
-            'timestamp' => now()->toISOString(),
-            'service' => 'CourseDetailsExtMEA API',
-            'version' => '1.0.0',
-            'database' => DB::connection()->getDatabaseName(),
-        ]);
-    });
+Route::get('/api-auth-test', function () {
+    return view('simple-auth');
+});
 
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'healthy',
+        'timestamp' => now()->toISOString(),
+        'service' => 'CourseDetailsExtMEA API',
+        'version' => '1.0.0',
+        'note' => 'For API access, use /api/* endpoints with X-API-Key header',
+        'default_test_key' => 'test-api-key-123',
+    ]);
+});
+
+// PUBLIC API ROUTES (No auth)
+Route::prefix('api')->group(function () {
     // API Documentation
     Route::get('/docs', function () {
         return response()->json([
             'api' => 'CourseDetailsExtMEA REST API',
             'version' => '1.0.0',
+            'authentication' => 'API Key required in X-API-Key header or api_key query parameter',
+            'default_test_key' => 'test-api-key-123',
             'endpoints' => [
                 'personnel' => [
                     'GET /api/personnel' => 'List all personnel',
@@ -37,38 +44,28 @@ Route::prefix('api')->group(function () {
                     'GET /api/personnel/{id}' => 'Get personnel details',
                     'PUT /api/personnel/{id}' => 'Update personnel',
                     'DELETE /api/personnel/{id}' => 'Delete personnel',
-                    'GET /api/personnel/mrid/{mrid}' => 'Get personnel by MRID',
-                    'GET /api/personnel/{id}/full' => 'Get personnel full details',
                 ],
-                'organisations' => [
-                    'GET /api/organisations' => 'List all organisations',
-                    'POST /api/organisations' => 'Create new organisation',
-                    'GET /api/organisations/{id}' => 'Get organisation details',
-                    'PUT /api/organisations/{id}' => 'Update organisation',
-                    'DELETE /api/organisations/{id}' => 'Delete organisation',
-                ],
-                'locations' => [
-                    'GET /api/locations' => 'List all locations',
-                    'POST /api/locations' => 'Create new location',
-                    'GET /api/locations/{id}' => 'Get location details',
-                    'PUT /api/locations/{id}' => 'Update location',
-                    'DELETE /api/locations/{id}' => 'Delete location',
-                ],
-                'vehicles' => [
-                    'GET /api/vehicles' => 'List all vehicles',
-                    'POST /api/vehicles' => 'Create new vehicle',
-                    'GET /api/vehicles/{id}' => 'Get vehicle details',
-                    'PUT /api/vehicles/{id}' => 'Update vehicle',
-                    'DELETE /api/vehicles/{id}' => 'Delete vehicle',
-                ],
-                'audit' => [
-                    'GET /api/audit/logs' => 'Get audit logs',
-                    'GET /api/audit/errors' => 'Get error logs',
+                'organisations' => 'GET /api/organisations',
+                'locations' => 'GET /api/locations',
+                'vehicles' => 'GET /api/vehicles',
+                'audit' => 'GET /api/audit/logs',
+                'api_keys' => [
+                    'POST /api/generate-key' => 'Generate new API key',
+                    'GET /api/validate-key' => 'Validate API key',
+                    'GET /api/list-keys' => 'List all API keys',
                 ],
             ],
         ]);
     });
+    
+    // API Key Management (Public - anyone can generate/validate keys)
+    Route::post('/generate-key', [SimpleApiKeyController::class, 'generateKey']);
+    Route::get('/validate-key', [SimpleApiKeyController::class, 'validateKey']);
+    Route::get('/list-keys', [SimpleApiKeyController::class, 'listKeys']);
+});
 
+// PROTECTED API ROUTES (Auth)
+Route::prefix('api')->group(function () {
     // Personnel Routes
     Route::prefix('personnel')->group(function () {
         Route::get('/', [ErpPersonController::class, 'index']);
@@ -78,6 +75,8 @@ Route::prefix('api')->group(function () {
         Route::delete('/{id}', [ErpPersonController::class, 'destroy']);
         Route::get('/mrid/{mrid}', [ErpPersonController::class, 'showByMrid']);
         Route::get('/{id}/full', [ErpPersonController::class, 'getFullDetails']);
+        Route::post('/{id}/link-organisation', [ErpPersonController::class, 'linkOrganisation']);
+        Route::post('/{id}/unlink-organisation', [ErpPersonController::class, 'unlinkOrganisation']);
         
         // Skills sub-routes
         Route::get('/{personnelId}/skills', [SkillController::class, 'index']);
@@ -92,6 +91,8 @@ Route::prefix('api')->group(function () {
         Route::get('/{id}', [ErpOrganisationController::class, 'show']);
         Route::put('/{id}', [ErpOrganisationController::class, 'update']);
         Route::delete('/{id}', [ErpOrganisationController::class, 'destroy']);
+        Route::get('/{id}/personnel', [ErpOrganisationController::class, 'getPersonnel']);
+        Route::get('/{id}/locations', [ErpOrganisationController::class, 'getLocations']);
     });
 
     // Location Routes
@@ -101,6 +102,8 @@ Route::prefix('api')->group(function () {
         Route::get('/{id}', [LocationController::class, 'show']);
         Route::put('/{id}', [LocationController::class, 'update']);
         Route::delete('/{id}', [LocationController::class, 'destroy']);
+        Route::get('/{id}/address', [LocationController::class, 'getAddress']);
+        Route::get('/{id}/personnel', [LocationController::class, 'getPersonnel']);
     });
 
     // Vehicle Routes
@@ -110,11 +113,13 @@ Route::prefix('api')->group(function () {
         Route::get('/{id}', [VehicleController::class, 'show']);
         Route::put('/{id}', [VehicleController::class, 'update']);
         Route::delete('/{id}', [VehicleController::class, 'destroy']);
+        Route::put('/{id}/odometer', [VehicleController::class, 'updateOdometer']);
     });
 
     // Audit Routes
     Route::prefix('audit')->group(function () {
         Route::get('/logs', [AuditLogController::class, 'index']);
         Route::get('/errors', [AuditLogController::class, 'errorLogs']);
+        Route::get('/summary', [AuditLogController::class, 'summary']);
     });
 });
