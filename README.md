@@ -1,4 +1,4 @@
-# CourseDetailsExtMEA - MEA Engineering Accountability System
+# CourseDetailsExtMEA System
 
 ## 📋 Project Overview
 
@@ -126,43 +126,52 @@ php public/scripts/test-api.php
 ### API Configurations
 ##### 📡 Core Endpoints
 
+
+###### 1. Personnel Management
 ```bash
-1. Personnel Management
-text
 GET    /api/personnel              # List all personnel
 POST   /api/personnel              # Create new personnel
 GET    /api/personnel/{id}         # Get personnel details
 PUT    /api/personnel/{id}         # Update personnel
 DELETE /api/personnel/{id}         # Delete personnel
 GET    /api/personnel/mrid/{mrid}  # Get by MRID
-2. Organisations
-text
+```
+
+###### 2. Organisations
+```bash
 GET    /api/organisations          # List organisations
 POST   /api/organisations          # Create organisation
 GET    /api/organisations/{id}     # Get organisation details
 PUT    /api/organisations/{id}     # Update organisation
 DELETE /api/organisations/{id}     # Delete organisation
-3. Locations
-text
+```
+
+###### 3. Locations
+```bash
 GET    /api/locations              # List locations
 POST   /api/locations              # Create location
 GET    /api/locations/{id}         # Get location details
 PUT    /api/locations/{id}         # Update location
 DELETE /api/locations/{id}         # Delete location
-4. Vehicles
-text
+```
+
+###### 4. Vehicles
+```bash
 GET    /api/vehicles               # List vehicles
 POST   /api/vehicles               # Create vehicle
 GET    /api/vehicles/{id}          # Get vehicle details
 PUT    /api/vehicles/{id}          # Update vehicle
 DELETE /api/vehicles/{id}          # Delete vehicle
-5. Audit Logs
-text
+```
+###### 5. Audit Logs
+```bash
 GET    /api/audit/logs             # View audit logs
 GET    /api/audit/errors           # View error logs
 GET    /api/audit/summary          # Get audit summary
-6. API Key Management (Public)
-text
+```
+
+###### 6. API Key Management (Public)
+```bash
 POST   /api/generate-key           # Generate new API key
 GET    /api/validate-key           # Validate API key
 GET    /api/list-keys              # List all API keys
@@ -192,4 +201,4 @@ GET  /api/integration/stats       # Integration statistics
 ```bash 
 Status: ✅ PRODUCTION READY
 ```
-This CourseDetailsExtMEA system is now fully implemented and ready to receive data from the OSB CourseDetailsMEAProvABCSREST project. All integration endpoints are tested and working. The system includes comprehensive audit logging, error handling, and monitoring capabilities for production use.
+*This CourseDetailsExtMEA system is now fully implemented and ready to receive data from the OSB CourseDetailsMEAProvABCSREST project. All integration endpoints are tested and working. The system includes comprehensive audit logging, error handling, and monitoring capabilities for production use.*
