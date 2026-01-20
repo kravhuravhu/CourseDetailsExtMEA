@@ -6,6 +6,8 @@ $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
 echo "=== Testing Simple API Authentication ===\n\n";
 
+$apiKey = env('API_KEY', 'default-test-key');
+
 $client = new GuzzleHttp\Client();
 $baseUrl = 'http://localhost:8000';
 
@@ -28,7 +30,7 @@ try {
 echo "\n3. Testing validate key (public):\n";
 try {
     $response = $client->get($baseUrl . '/api/validate-key', [
-        'query' => ['api_key' => 'test-api-key-123']
+        'query' => ['api_key' => $apiKey]
     ]);
     $data = json_decode($response->getBody(), true);
     echo "   ✓ Status: " . $response->getStatusCode() . "\n";
@@ -50,7 +52,7 @@ try {
 echo "\n5. Testing protected endpoint WITH valid key:\n";
 try {
     $response = $client->get($baseUrl . '/api/personnel', [
-        'headers' => ['X-API-Key' => 'test-api-key-123'],
+        'headers' => ['X-API-Key' => $apiKey],
         'http_errors' => false
     ]);
     $data = json_decode($response->getBody(), true);
