@@ -6,6 +6,9 @@ $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
 echo "=== Testing CourseDetailsExtMEA API ===\n\n";
 
+// Load API key from .env
+$apiKey = env('API_KEY', 'default-test-key'); // fallback if not set
+
 // Test endpoints
 $baseUrl = 'http://localhost:8000/api';
 $tests = [
@@ -18,6 +21,8 @@ $tests = [
     ['GET', '/audit/logs', 'Audit Logs'],
 ];
 
+$client = new GuzzleHttp\Client();
+
 foreach ($tests as $test) {
     list($method, $endpoint, $description) = $test;
     $url = $baseUrl . $endpoint;
@@ -25,15 +30,12 @@ foreach ($tests as $test) {
     echo "Testing: {$description}\n";
     echo "Endpoint: {$method} {$endpoint}\n";
     
-    // Create HTTP request
-    $client = new GuzzleHttp\Client();
-    
     try {
         $response = $client->request($method, $url, [
             'headers' => [
-                'Accept' => 'application/json',
+                'Accept'       => 'application/json',
                 'Content-Type' => 'application/json',
-                 'X-API-Key'     => 'test-api-key-123', 
+                'X-API-Key'    => $apiKey,
             ],
             'http_errors' => false,
         ]);
@@ -65,7 +67,7 @@ foreach ($tests as $test) {
 
 echo "\n=== API Test Complete ===\n";
 
-// Test database connection through API
+// Test database connection through Models
 echo "\n=== Testing Database through Models ===\n";
 
 use App\Models\Personnel\ErpPerson;
@@ -74,10 +76,10 @@ use App\Models\Location\Location;
 use App\Models\Vehicle\Vehicle;
 
 $models = [
-    'ErpPerson' => ErpPerson::class,
+    'ErpPerson'       => ErpPerson::class,
     'ErpOrganisation' => ErpOrganisation::class,
-    'Location' => Location::class,
-    'Vehicle' => Vehicle::class,
+    'Location'        => Location::class,
+    'Vehicle'         => Vehicle::class,
 ];
 
 foreach ($models as $name => $model) {
