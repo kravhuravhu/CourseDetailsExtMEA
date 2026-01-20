@@ -9,10 +9,15 @@ use App\Services\AuditService;
 class BaseController extends Controller
 {
     protected $auditService;
+    protected $apiKeyId;
+    protected $apiKeyName;
 
     public function __construct()
     {
         $this->auditService = new AuditService();
+
+        $this->apiKeyId = request()->get('api_key_id');
+        $this->apiKeyName = request()->get('api_key_name');
     }
 
     /**
@@ -51,10 +56,12 @@ class BaseController extends Controller
      */
     protected function logAudit($action, $description, $data = null)
     {
+        $apiKeyInfo = $this->apiKeyName ? " | API Key: {$this->apiKeyName}" : '';
+        
         $this->auditService->logAudit([
             'transaction_id' => request()->header('X-Transaction-ID') ?? uniqid('TXN_', true),
             'component_name' => 'CourseDetailsExtMEA-API',
-            'description' => "API {$action}: {$description}",
+            'description' => "API {$action}: {$description}{$apiKeyInfo}",
             'audit_type' => 'API_CALL',
             'source_timestamp' => now(),
         ]);
@@ -65,10 +72,12 @@ class BaseController extends Controller
      */
     protected function logError($description, $exception = null, $criticality = 'Medium')
     {
+        $apiKeyInfo = $this->apiKeyName ? " | API Key: {$this->apiKeyName}" : '';
+        
         $this->auditService->logError([
             'transaction_id' => request()->header('X-Transaction-ID') ?? uniqid('TXN_', true),
             'component_name' => 'CourseDetailsExtMEA-API',
-            'description' => $description,
+            'description' => "{$description}{$apiKeyInfo}",
             'exception' => $exception ? $exception->getMessage() : null,
             'criticality' => $criticality,
             'category' => 'APIError',
