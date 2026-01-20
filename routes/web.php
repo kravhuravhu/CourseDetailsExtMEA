@@ -58,8 +58,8 @@ Route::prefix('api')->group(function () {
         ]);
     });
     
-    // API Key Management (Public - anyone can generate/validate keys)
-    Route::post('/generate-key', [SimpleApiKeyController::class, 'generateKey']);
+    // API Key Management
+    Route::post('/generate-key', [SimpleApiKeyController::class, 'generateKey'])->withoutMiddleware(['web']);
     Route::get('/validate-key', [SimpleApiKeyController::class, 'validateKey']);
     Route::get('/list-keys', [SimpleApiKeyController::class, 'listKeys']);
 });

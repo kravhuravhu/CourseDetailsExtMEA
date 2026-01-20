@@ -1,20 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Api\Personnel;
+namespace App\Http\Controllers\Api\Audit;
 
 use App\Http\Controllers\Api\BaseController;
-use App\Http\Requests\Api\Personnel\CreateErpPersonRequest;
-use App\Http\Requests\Api\Personnel\UpdateErpPersonRequest;
-use App\Models\Personnel\Personnel;
-use App\Models\Personnel\ErpPersonnel;
-use App\Models\Personnel\ErpPerson;
+use App\Models\Audit\AuditLog;
+use App\Models\Audit\ErrorLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Exception;
 use App\Models\ApiKey;
 
-class ErpPersonController extends BaseController
+class AuditLogController extends BaseController
 {
     public function __construct()
     {
