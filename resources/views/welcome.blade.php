@@ -368,6 +368,15 @@
                 <div class="endpoint">Query Parameter: ?api_key={{ env('API_KEY') }}</div>
             </div>
         </div>
+
+        <!-- System Documentation -->
+        <div class="api-section">
+            <h3>📘 System Documentation</h3>
+            <a href="/readme" target="_blank" class="btn">Open README</a>
+            <a href="/api-auth-test" target="_blank" class="btn">API Auth Test</a>
+            <a href="/integration-guide" target="_blank" class="btn">Integration Guide</a>
+        </div>
+
     </div>
 
     <script>

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
 use App\Http\Controllers\Api\Personnel\ErpPersonController;
 use App\Http\Controllers\Api\Personnel\SkillController;
 use App\Http\Controllers\Api\Organisation\ErpOrganisationController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Api\Vehicle\VehicleController;
 use App\Http\Controllers\Api\Audit\AuditLogController;
 use App\Http\Controllers\Api\SimpleApiKeyController;
 use App\Http\Controllers\Api\Integration\IntegrationController;
+use Illuminate\Support\Str;
 
 Route::middleware(['web'])->group(function () {
     Route::get('/', function () {
@@ -33,6 +35,14 @@ Route::middleware(['web'])->group(function () {
             'default_test_key' => 'test-api-key-123',
         ]);
     });
+
+
+
+
+Route::get('/readme', function () {
+    $markdown = File::get(base_path('README.md'));
+    return Str::markdown($markdown);
+});
 });
 
 // API Routes
