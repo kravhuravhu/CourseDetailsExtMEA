@@ -6,8 +6,7 @@ $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
 echo "=== Testing CourseDetailsExtMEA API ===\n\n";
 
-// Load API key from .env
-$apiKey = env('API_KEY', 'default-test-key'); // fallback if not set
+$apiKey = env('API_KEY', 'default-test-key');
 
 // Test endpoints
 $baseUrl = 'http://localhost:8000/api';
