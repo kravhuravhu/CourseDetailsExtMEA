@@ -10,12 +10,22 @@ use App\Http\Controllers\Api\Vehicle\VehicleController;
 use App\Http\Controllers\Api\Audit\AuditLogController;
 use App\Http\Controllers\Api\SimpleApiKeyController;
 use App\Http\Controllers\Api\Integration\IntegrationController;
+use App\Http\Controllers\V2\PersonnelDataControllerV2;
+use App\Http\Controllers\V2\AuditLogControllerV2;
+use App\Http\Controllers\V2\ErrorLogControllerV2;
+use App\Http\Controllers\V2\DashboardControllerV2;
 use Illuminate\Support\Str;
 
 Route::middleware(['web'])->group(function () {
     Route::get('/', function () {
-        return view('welcome');
+        // redirect to dash v2
+        return redirect()->route('v2.dashboard');
     });
+
+    // V2 Dashboard
+    Route::get('/v2/dashboard', [
+        DashboardControllerV2::class, 'index'
+    ])->name('v2.dashboard');
 
     Route::get('/api-auth-test', function () {
         return view('simple-auth');
@@ -35,9 +45,6 @@ Route::middleware(['web'])->group(function () {
             'default_test_key' => 'test-api-key-123',
         ]);
     });
-
-
-
 
 Route::get('/readme', function () {
     $markdown = File::get(base_path('README.md'));
@@ -161,5 +168,31 @@ Route::prefix('api')->group(function () {
         Route::get('/logs', [AuditLogController::class, 'index']);
         Route::get('/errors', [AuditLogController::class, 'errorLogs']);
         Route::get('/summary', [AuditLogController::class, 'summary']);
+    });
+});
+
+// CourseDetailsExtMEA API v2.0 routes
+Route::prefix('api/v2')->group(function () {
+    
+    // Personnel endpoints (for OSB business service)
+    Route::get('/personnel', [PersonnelDataControllerV2::class, 'index']);
+    Route::get('/personnel/{id}', [PersonnelDataControllerV2::class, 'show']);
+    Route::post('/personnel', [PersonnelDataControllerV2::class, 'store']);
+    
+    // Audit endpoints (called by AuditErrorPS from OSB)
+    Route::post('/audit/logs', [AuditLogControllerV2::class, 'store']);
+    Route::get('/audit/logs', [AuditLogControllerV2::class, 'index']);
+    
+    // Error endpoints (called by AuditErrorPS from OSB)
+    Route::post('/error/logs', [ErrorLogControllerV2::class, 'store']);
+    Route::get('/error/logs', [ErrorLogControllerV2::class, 'index']);
+    
+    // Health check
+    Route::get('/health', function() {
+        return response()->json([
+            'status' => 'healthy',
+            'version' => '2.0',
+            'timestamp' => now()
+        ]);
     });
 });
